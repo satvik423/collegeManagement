@@ -183,7 +183,7 @@ if (subjectTable) {
           console.log("Server response:", data);
           // Remove the row from the table only if the server-side deletion is successful
           if (data.success) {
-            departmentTable.deleteRow(rowIndex);
+            subjectTable.deleteRow(rowIndex);
           }
         })
         .catch((error) => {
