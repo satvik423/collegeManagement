@@ -32,59 +32,74 @@ app.post("/", (req, res) => {
 });
 
 //login
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
-  // Query the login_detail table for the user_id
-  db.query(
-    "SELECT * FROM login_detail WHERE user_id = ?",
-    [username],
-    (error, results) => {
-      if (error) {
-        console.error("Database error:", error);
-        return res
-          .status(500)
-          .json({ error: true, message: "Internal Server Error" });
-      }
-
-      if (results.length === 0) {
-        // User ID not found
-        return res
-          .status(401)
-          .json({ error: true, message: "User ID not found" });
-      }
-
-      // Compare the provided password with the stored password
-      const storedPassword = results[0].password;
-      if (password === storedPassword) {
-        // Passwords match, determine user type and redirect
-        const userType = getUsernameType(username);
-        switch (userType) {
-          case "faculty":
-            return res.json({ success: true, redirect: "faculty.html" });
-          case "student":
-            return res.json({
-              success: true,
-              redirect: "../pages/staff/home.html",
-            });
-          case "admin":
-            return res.json({
-              success: true,
-              redirect: "../pages/admin/home.html",
-            });
-          default:
-            return res
-              .status(500)
-              .json({ error: true, message: "Invalid user type" });
+  try {
+    // Query the login_detail table for the user_id
+    const results = await new Promise((resolve, reject) => {
+      db.query(
+        "SELECT * FROM login_detail WHERE user_id = ?",
+        [username],
+        (error, results) => {
+          if (error) {
+            console.error("Database error:", error);
+            reject(error);
+          } else {
+            resolve(results);
+          }
         }
-      } else {
-        // Incorrect password
-        return res
-          .status(401)
-          .json({ error: true, message: "Incorrect password" });
-      }
+      );
+    });
+
+    if (results.length === 0) {
+      // User ID not found
+      return res
+        .status(401)
+        .json({ error: true, message: "User ID not found" });
     }
-  );
+
+    // Compare the provided password with the stored password
+    const storedPassword = results[0].password;
+    if (password === storedPassword) {
+      // Passwords match, determine user type and redirect
+      const userType = await getUsernameType(username);
+
+      console.log(userType);
+
+      switch (userType) {
+        case "faculty":
+          return res.json({
+            success: true,
+            redirect: "../pages/staff/home.html",
+          });
+        case "student":
+          return res.json({
+            success: true,
+            redirect: "../pages/student/home.html",
+          });
+        case "admin":
+          return res.json({
+            success: true,
+            redirect: "../pages/admin/home.html",
+          });
+        default:
+          return res
+            .status(500)
+            .json({ error: true, message: "Invalid user type" });
+      }
+    } else {
+      // Incorrect password
+      return res
+        .status(401)
+        .json({ error: true, message: "Incorrect password" });
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+    return res
+      .status(500)
+      .json({ error: true, message: "Internal Server Error" });
+  }
 });
 
 async function getUsernameType(username) {
@@ -97,15 +112,19 @@ async function getUsernameType(username) {
       "SELECT * FROM student_details WHERE student_id = ?";
 
     try {
-      const facultyResults = await db.query(checkFacultySql, [username]);
-      const studentResults = await db.query(checkStudentSql, [username]);
+      const [facultyResults] = await db
+        .promise()
+        .query(checkFacultySql, [username]);
+      const [studentResults] = await db
+        .promise()
+        .query(checkStudentSql, [username]);
 
       if (facultyResults.length > 0) return "faculty";
       else if (studentResults.length > 0) return "student";
       else return "unknown";
     } catch (error) {
       console.error("Database error in getUsernameType:", error);
-      throw error; // Propagate the error for handling in the calling code
+      throw error;
     }
   }
 }
