@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="../styles/admin/style.css" />
+  </head>
+  <body>
+    <form class="loginPage" id="loginForm">
+      <h3>Login Here</h3>
+
+      <label for="username">Username</label>
+      <input
+        type="text"
+        placeholder="Faculty ID, Student ID, or Admin"
+        id="username"
+        required
+      />
+
+      <label for="password">Password</label>
+      <input type="password" placeholder="Password" id="password" required />
+
+      <button class="submit" type="submit">Log In</button>
+      <div
+        id="message"
+        style="padding: 1rem 0; width: 100%; text-align: center"
+      ></div>
+    </form>
+    <script src="../routes/login/route.js"></script>
+    <script>
+      // Disable the back button on the login page
+      history.pushState(null, null, location.href);
+      window.onpopstate = function () {
+        history.go(1);
+      };
+    </script>
+  </body>
+</html>

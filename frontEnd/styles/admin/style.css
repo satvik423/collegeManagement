@@ -1,0 +1,375 @@
+:root {
+  font-size: 16px;
+  font-family: "Open Sans";
+  --text-primary: #b6b6b6;
+  --text-secondary: #ececec;
+  --bg-primary: #23232e;
+  --bg-secondary: #141418;
+  --transition-speed: 600ms;
+}
+
+body {
+  color: black;
+  background-color: powderblue;
+  margin: 0%;
+  padding: 0%;
+}
+
+body::-webkit-scrollbar {
+  width: 0.25rem;
+}
+
+body::-webkit-scrollbar-track {
+  background: #1e1e24;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #6649b8;
+}
+
+main {
+  margin-left: 5rem;
+  top: 6rem;
+  padding: 1rem;
+}
+
+.navbar {
+  width: 5rem;
+  height: 100vh;
+  position: fixed;
+  background-color: var(--bg-primary);
+  transition: width 600ms ease;
+  z-index: 1;
+}
+
+.navbar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.nav-item {
+  width: 100%;
+}
+
+.nav-item:first-child .nav-link {
+  height: 3rem;
+}
+
+.nav-item:last-child {
+  margin-top: auto;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  height: 5rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  filter: grayscale(100%) opacity(0.7);
+  transition: var(--transition-speed);
+}
+
+.nav-link:hover {
+  filter: grayscale(0%) opacity(1);
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+}
+
+.link-text {
+  display: none;
+  margin-left: 1rem;
+}
+
+.nav-link svg {
+  min-width: 2rem;
+  margin: 0 1.5rem;
+}
+
+.navbar:hover {
+  width: 16rem;
+}
+
+.navbar:hover .link-text {
+  display: block;
+}
+
+.horizontalNavbar {
+  width: 100%;
+  height: 5rem;
+  position: fixed;
+  background-color: white;
+}
+
+.horizontalNavbar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  height: 5rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: end;
+  width: 100%;
+}
+.horizontalNav-items {
+  padding: 10px;
+}
+
+.horizontalNav-link {
+  margin-right: 3rem;
+  text-decoration: none;
+  height: 3rem;
+  width: 5rem;
+  color: black;
+}
+
+.svg-color {
+  fill: #df49a6;
+  transition: var(--transition-speed);
+}
+
+.form {
+  width: clamp(320px 30% 430px);
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 0.35rem;
+  padding: 1.5rem;
+  background-color: #fff5;
+  box-shadow: 2px 4px 11px -1px #000000;
+}
+
+input {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  background-color: #fffb;
+  width: 100%;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-div {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 50% 50%;
+}
+
+.input-group1 {
+  grid-column: 1 /3;
+}
+
+.btn-div {
+  grid-column: 2 /3;
+}
+
+input[type="button"]:hover,
+.btn-next:hover {
+  background-color: powderblue;
+}
+
+section.table {
+  margin-left: 10%;
+  height: 80vh;
+  width: 150vh;
+  background-color: #fff5;
+  box-shadow: 0 0.4rem 0.8rem #0005;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.table_header {
+  background-color: #fff4;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table_header .input-group {
+  width: 35%;
+  height: 3rem;
+  background-color: #fff5;
+  padding: 0 0.8rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.table_header .input-group svg {
+  height: 1.2rem;
+  width: 1.2rem;
+}
+
+.search {
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.5rem 0 0.3rem;
+  border-radius: 2rem;
+  margin-top: 0;
+  background-color: transparent;
+  border-style: none;
+  outline: none;
+}
+
+.table_body {
+  width: 95%;
+  max-height: 500px;
+  background-color: #fffb;
+  margin: 0.8rem auto;
+  border-radius: 0.6rem;
+  overflow: overlay;
+}
+
+.table_body::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+.table_body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table_body::-webkit-scrollbar-thumb {
+  background: #6649b8;
+  border-radius: 0.5rem;
+  visibility: hidden;
+}
+
+.table_body:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+table,
+th,
+td {
+  padding: 1rem;
+  border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #ecf0f1;
+}
+
+tbody td {
+  border-right: solid;
+  border-width: thin;
+}
+tbody td:last-child {
+  border-right: none;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #0000000b;
+}
+
+tbody tr:hover {
+  background-color: white;
+}
+
+.container {
+  width: 55%;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 50% 50% 50%;
+}
+
+.card {
+  background-color: #fff6;
+  border-radius: 2rem;
+  border: 2px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  padding: 3rem;
+}
+
+/* loginPage */
+.loginPage {
+  height: 420px;
+  width: 400px;
+  background-color: rgba(255, 255, 255, 0.13);
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+  padding: 50px 35px;
+}
+
+.loginPage * {
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 0.5px;
+  outline: none;
+  border: none;
+}
+
+.loginPage h3 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 42px;
+  text-align: center;
+}
+
+.loginPage label {
+  display: block;
+  margin-top: 30px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.loginPage input {
+  display: block;
+  height: 50px;
+  width: 100%;
+  border: 1px solid black;
+  background-color: rgba(255, 255, 255, 0.07);
+  border-radius: 3px;
+  padding: 0 10px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 300;
+}
+::placeholder {
+  color: black;
+}
+
+.loginPage button {
+  margin-top: 50px;
+  width: 100%;
+  background-color: black;
+  color: wheat;
+  padding: 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.loginPage input:focus {
+  background-color: white;
+}
+
+.loginPage button:hover {
+  background-color: white;
+  color: black;
+}
