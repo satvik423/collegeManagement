@@ -439,7 +439,8 @@ app.post("/submit-form-student", (req, res) => {
 
 //fetch student details
 app.get("/fetch-student-data", (req, res) => {
-  const sql = "SELECT student_id,full_name,department FROM student_details";
+  const sql =
+    "SELECT student_id,full_name,semester,department FROM student_details";
 
   db.query(sql, (err, result) => {
     if (err) {
@@ -570,6 +571,251 @@ app.get("/fetch-total-counts", (req, res) => {
     });
   });
 });
+
+// Endpoint to fetch subject names based on semester
+app.get("/subjects", (req, res) => {
+  const { semester, username } = req.query;
+
+  // Step 1: Fetch dept_id from department_details based on the faculty's department
+  const getDeptIdQuery =
+    "SELECT dept_id FROM department_details WHERE dept_name = (SELECT department FROM faculty_details WHERE faculty_id = ?)";
+  db.query(getDeptIdQuery, [username], (error, deptResults) => {
+    if (error) {
+      console.error("Database error:", error);
+      res.status(500).json({ error: true, message: "Internal Server Error" });
+      return;
+    }
+
+    if (deptResults.length === 0) {
+      res
+        .status(404)
+        .json({ error: true, message: "Department not found for the faculty" });
+      return;
+    }
+
+    const deptId = deptResults[0].dept_id;
+
+    // Step 2: Fetch subjects based on semester and dept_id
+    const getSubjectsQuery =
+      "SELECT DISTINCT subject_name FROM subject_details WHERE semester = ? AND dept_id = ?";
+    db.query(getSubjectsQuery, [semester, deptId], (error, subjectResults) => {
+      if (error) {
+        console.error("Database error:", error);
+        res.status(500).json({ error: true, message: "Internal Server Error" });
+        return;
+      }
+
+      // Extract subject names from the query results
+      const subjectNames = subjectResults.map((row) => row.subject_name);
+      res.json(subjectNames);
+    });
+  });
+});
+
+// Endpoint to fetch student name and id based on semster
+app.get("/students", (req, res) => {
+  const { semester, username } = req.query;
+
+  // Fetch dept_id from department_details based on the faculty's department
+  const getDeptQuery =
+    "SELECT department FROM faculty_details WHERE faculty_id = ?";
+  db.query(getDeptQuery, [username], (error, deptResults) => {
+    if (error) {
+      console.error("Database error:", error);
+      res.status(500).json({ error: true, message: "Internal Server Error" });
+      return;
+    }
+
+    if (deptResults.length === 0) {
+      res
+        .status(404)
+        .json({ error: true, message: "Department not found for the faculty" });
+      return;
+    }
+
+    const deptId = deptResults[0].department;
+    // Fetch students based on semester and dept_id
+    const getStudentsQuery =
+      "SELECT student_id, full_name FROM student_details WHERE semester = ? AND department = ?";
+    db.query(getStudentsQuery, [semester, deptId], (err, result) => {
+      if (err) {
+        console.error("Error fetching students:", err);
+        res
+          .status(500)
+          .json({ error: "An error occurred while fetching students." });
+        return;
+      }
+      res.json(result);
+    });
+  });
+});
+
+// Add this endpoint to handle the insertion into mark_details
+app.post("/insertMarks", (req, res) => {
+  const marksData = req.body;
+
+  const query =
+    "INSERT INTO mark_details (student_id, subject_name, semester, exam, marks) VALUES ?";
+
+  const values = marksData.map((mark) => [
+    mark.student_id,
+    mark.subject_name,
+    mark.semester,
+    mark.exam,
+    mark.marks,
+  ]);
+
+  db.query(query, [values], (err, result) => {
+    if (err) {
+      console.error("Error inserting marks:", err);
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: {
+          code: err.code,
+          errno: err.errno,
+          sqlMessage: err.sqlMessage,
+        },
+      });
+
+      return;
+    } else {
+      console.log("Marks inserted successfully");
+      res.json({ success: true });
+    }
+  });
+});
+
+app.get("/fetch-student-marks", (req, res) => {
+  const { username } = req.query;
+
+  // Get the department name from the faculty_details table
+  const facultyQuery =
+    "SELECT department FROM faculty_details WHERE faculty_id = ?";
+  db.query(facultyQuery, [username], (facultyErr, facultyResult) => {
+    if (facultyErr) {
+      console.error("Error fetching department from faculty_details table");
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: {
+          code: facultyErr.code,
+          errno: facultyErr.errno,
+          sqlMessage: facultyErr.sqlMessage,
+        },
+      });
+      return;
+    }
+
+    const department = facultyResult[0]?.department;
+
+    if (!department) {
+      console.error("Department not found for the given faculty_id");
+      res.status(400).json({
+        error: "Bad Request",
+        message: "Department not found for the given faculty_id",
+      });
+      return;
+    }
+
+    // Fetch student details for the specific department
+    const studentQuery =
+      "SELECT mark_details.student_id, full_name, mark_details.semester, subject_name, " +
+      "MAX(CASE WHEN exam = 'MSE 1' THEN marks END) as MS1, " +
+      "MAX(CASE WHEN exam = 'MSE 2' THEN marks END) as MS2, " +
+      "MAX(CASE WHEN exam = 'SEM' THEN marks END) as SEM " +
+      "FROM mark_details " +
+      "INNER JOIN student_details ON mark_details.student_id = student_details.student_id " +
+      "WHERE student_details.department = ? " +
+      "GROUP BY mark_details.student_id, subject_name, mark_details.semester";
+
+    db.query(studentQuery, [department], (studentErr, studentResult) => {
+      if (studentErr) {
+        console.error("Error fetching student marks from MySQL");
+        res.status(500).json({
+          error: "Internal Server Error",
+          message: {
+            code: studentErr.code,
+            errno: studentErr.errno,
+            sqlMessage: studentErr.sqlMessage,
+          },
+        });
+        return;
+      }
+
+      res.json({ studentMarks: studentResult });
+    });
+  });
+});
+
+app.post("/update-mark", (req, res) => {
+  const updateData = req.body;
+
+  // Update MSE1
+  updateMarks("MSE 1", updateData.MSE1, updateData);
+  // Update MSE2
+  updateMarks("MSE 2", updateData.MSE2, updateData);
+  // Update SEM
+  updateMarks("SEM", updateData.SEM, updateData);
+
+  res.json({ success: true, message: "Marks updated successfully!" });
+});
+
+function updateMarks(exam, marks, data) {
+  const selectSql = `
+    SELECT *
+    FROM mark_details
+    WHERE student_id = ? AND subject_name = ? AND semester = ? AND exam = ?`;
+
+  const updateSql = `
+    UPDATE mark_details
+    SET marks = ?
+    WHERE student_id = ? AND subject_name = ? AND semester = ? AND exam = ?`;
+
+  const insertSql = `
+    INSERT INTO mark_details (student_id, subject_name, semester, exam, marks)
+    VALUES (?, ?, ?, ?, ?)`;
+
+  // Check if the row exists
+  db.query(
+    selectSql,
+    [data.student_id, data.subjectName, data.semester, exam],
+    (err, result) => {
+      if (err) {
+        console.error(`Error checking if ${exam} row exists:`, err);
+        // Handle the error accordingly
+      } else {
+        if (result.length > 0) {
+          // Row exists, update the marks
+          db.query(
+            updateSql,
+            [marks, data.student_id, data.subjectName, data.semester, exam],
+            (err, result) => {
+              if (err) {
+                console.error(`Error updating ${exam} marks:`, err);
+                // Handle the error accordingly
+              } else {
+                console.log(`${exam} Marks updated successfully`);
+              }
+            }
+          );
+        } else {
+          // Row doesn't exist, insert new row
+          db.query(
+            insertSql,
+            [data.student_id, data.subjectName, data.semester, exam, marks],
+            (err, result) => {
+              if (err) {
+                console.error(`Error inserting ${exam} marks:`, err);
+                // Handle the error accordingly
+              } else {
+                console.log(`${exam} Marks inserted successfully`);
+              }
+            }
+          );
+        }
+      }
+    }
+  );
+}
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

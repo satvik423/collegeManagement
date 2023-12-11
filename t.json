@@ -1,0 +1,67 @@
+{
+  "studentMarks": [
+    {
+      "student_id": "1234",
+      "full_name": "Vikas",
+      "semester": "I sem",
+      "subject_name": "Accountance",
+      "MS1": 15,
+      "MS2": null,
+      "SEM": null
+    },
+    {
+      "student_id": "m123",
+      "full_name": "Satvik R Shetty",
+      "semester": "I sem",
+      "subject_name": "ADBMS",
+      "MS1": 12,
+      "MS2": null,
+      "SEM": 14
+    },
+    {
+      "student_id": "m123",
+      "full_name": "Satvik R Shetty",
+      "semester": "I sem",
+      "subject_name": "COA",
+      "MS1": 14,
+      "MS2": null,
+      "SEM": null
+    },
+    {
+      "student_id": "m123",
+      "full_name": "Satvik R Shetty",
+      "semester": "I sem",
+      "subject_name": "DSA",
+      "MS1": 14,
+      "MS2": 14,
+      "SEM": null
+    },
+    {
+      "student_id": "m124",
+      "full_name": "Shashank Shetty",
+      "semester": "I sem",
+      "subject_name": "ADBMS",
+      "MS1": 11,
+      "MS2": null,
+      "SEM": 12
+    },
+    {
+      "student_id": "m124",
+      "full_name": "Shashank Shetty",
+      "semester": "I sem",
+      "subject_name": "COA",
+      "MS1": 12,
+      "MS2": null,
+      "SEM": null
+    },
+    {
+      "student_id": "m124",
+      "full_name": "Shashank Shetty",
+      "semester": "I sem",
+      "subject_name": "DSA",
+      "MS1": 15,
+      "MS2": 12,
+      "SEM": null
+    }
+  ]
+}

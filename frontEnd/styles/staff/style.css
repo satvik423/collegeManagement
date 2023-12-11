@@ -132,3 +132,159 @@ main {
   fill: #df49a6;
   transition: var(--transition-speed);
 }
+
+section.table {
+  margin-left: 10%;
+
+  height: 80vh;
+  width: 150vh;
+  background-color: #fff5;
+  box-shadow: 0 0.4rem 0.8rem #0005;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.table_header {
+  background-color: #fff4;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table_body {
+  width: 95%;
+  max-height: 500px;
+  background-color: #fffb;
+  margin: 0.8rem auto;
+  border-radius: 0.6rem;
+  overflow: overlay;
+}
+
+.table_body::-webkit-scrollbar {
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+.table_body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.table_body::-webkit-scrollbar-thumb {
+  background: #6649b8;
+  border-radius: 0.5rem;
+  visibility: hidden;
+}
+
+.table_body:hover::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+table,
+th,
+td {
+  padding: 1rem;
+  border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  text-align: center;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background-color: #ecf0f1;
+}
+
+tbody td {
+  border-right: solid;
+  border-width: thin;
+}
+tbody td:last-child {
+  border-right: none;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #0000000b;
+}
+
+tbody tr:hover {
+  background-color: white;
+}
+
+input {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  background-color: #fffb;
+  width: 13rem;
+}
+
+input[type="button"]:hover,
+.btn-search:hover,
+.btn-add:hover,
+.editButton:hover {
+  background-color: powderblue;
+}
+
+section.table {
+  margin-left: 10%;
+  height: 80vh;
+  width: 150vh;
+  background-color: #fff5;
+  box-shadow: 0 0.4rem 0.8rem #0005;
+  border-radius: 0.8rem;
+  overflow: hidden;
+}
+
+.table_header {
+  background-color: #fff4;
+  padding: 0.8rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table_header .input-group {
+  width: 35%;
+  height: 3rem;
+  background-color: #fff5;
+  padding: 0 0.8rem;
+  border-radius: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.table_header .input-group svg {
+  height: 1.2rem;
+  width: 1.2rem;
+}
+
+.search {
+  width: 100%;
+  height: 2rem;
+  padding: 0 0.5rem 0 0.3rem;
+  border-radius: 2rem;
+  margin-top: 0;
+  background-color: transparent;
+  border-style: none;
+  outline: none;
+}
+
+.marksInput {
+  text-align: center;
+  width: 5rem;
+}
+
+.editButton {
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  background-color: #fffb;
+  width: 5rem;
+}

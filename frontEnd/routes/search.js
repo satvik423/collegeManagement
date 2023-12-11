@@ -6,8 +6,8 @@ function searchTable() {
   var tableBody = document.querySelector(".table_body");
   var rows = tableBody.getElementsByTagName("tr");
 
-  // Loop through each row and hide/show based on the search input
-  for (var i = 0; i < rows.length; i++) {
+  // Loop through each row starting from the second row (index 1) to exclude the header
+  for (var i = 1; i < rows.length; i++) {
     var cells = rows[i].getElementsByTagName("td");
     var rowVisible = false;
 
