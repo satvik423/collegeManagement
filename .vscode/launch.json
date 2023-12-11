@@ -8,7 +8,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "Open home",
-      "file": "C:\\Users\\s1732\\Adbs Project\\collegeManagement\\frontEnd\\pages\\login.html"
+      "file": "D:\\dev\\PROJECT\\collegeManagement\\frontEnd\\pages\\login.html"
     }
   ]
 }
