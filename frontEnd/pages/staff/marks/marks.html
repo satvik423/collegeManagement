@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="../../../styles/admin/style.css" />
+    <link rel="stylesheet" href="../../../styles/staff/style.css" />
   </head>
   <body>
     <nav class="horizontalNavbar">
       <ul class="horizontalNavbar-nav">
         <li class="horizontalNav-items">
-          <a class="horizontalNav-link" href="./subject.html">
-            <span class="">MANAGE</span>
+          <a class="horizontalNav-link" href="./add-marks.html">
+            <span class="">UPLOAD MARKS</span>
           </a>
         </li>
       </ul>
@@ -20,7 +20,7 @@
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link">
-            <span class="link-text">ADMIN</span>
+            <span class="link-text">FACULTY</span>
           </a>
         </li>
         <li class="nav-item">
@@ -40,7 +40,7 @@
         </li>
 
         <li class="nav-item">
-          <a href="../staff/staff.html" class="nav-link">
+          <a href="./marks.html" class="nav-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
@@ -51,12 +51,12 @@
                 d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3zM504 312V248H440c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V136c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H552v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"
               />
             </svg>
-            <span class="link-text">Staff</span>
+            <span class="link-text">MARKS</span>
           </a>
         </li>
 
         <li class="nav-item">
-          <a href="../student/student.html" class="nav-link">
+          <a href="./student/student.html" class="nav-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
@@ -72,7 +72,7 @@
         </li>
 
         <li class="nav-item">
-          <a href="../department/dept.html" class="nav-link">
+          <a href="./department/dept.html" class="nav-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
@@ -88,7 +88,7 @@
         </li>
 
         <li class="nav-item">
-          <a href="./subject.html" class="nav-link">
+          <a href="./subjects/subject.html" class="nav-link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="1em"
@@ -121,65 +121,49 @@
       </ul>
     </nav>
     <div class="box" style="height: 5rem"></div>
-
     <main>
-      <section>
-        <form action="#" method="post" class="form" id="subjectForm">
-          <h1>Add Subject</h1>
-          <div class="form-div">
-            <div class="input-group2">
-              <input
-                type="text"
-                name="sub_name"
-                placeholder="Enter Subject Name"
-                class="subName"
-                required
+      <section class="table">
+        <section class="table_header">
+          <h1>Student List</h1>
+          <div class="input-group">
+            <input
+              type="search"
+              placeholder="Search Data..."
+              class="search"
+              oninput="searchTable()"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="16"
+              width="16"
+              viewBox="0 0 512 512"
+            >
+              <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.-->
+              <path
+                d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
               />
-            </div>
-
-            <div class="input-group2">
-              <input
-                type="text"
-                name="sub_id"
-                class="sub_id"
-                placeholder="Enter Subject ID"
-                required
-              />
-            </div>
-
-            <div class="input-group3">
-              <input
-                list="dept"
-                placeholder="Department Name"
-                class="dept"
-                required
-              />
-              <datalist id="dept"> </datalist>
-            </div>
-            <div class="input-group4">
-              <input
-                list="sem"
-                placeholder="Enter Semester"
-                class="sem"
-                required
-              />
-              <datalist id="sem">
-                <option value="I sem"></option>
-                <option value="II sem"></option>
-                <option value="III sem"></option>
-                <option value="IV sem"></option>
-                <option value="V sem"></option>
-                <option value="VI sem"></option>
-              </datalist>
-            </div>
-            <div class="btn-div">
-              <input type="submit" value="ADD SUBJECT" class="btn-next" />
-            </div>
-            <div id="message"></div>
+            </svg>
           </div>
-        </form>
-        <script src="../../../routes/admin/route.js"></script>
+        </section>
+        <section class="table_body">
+          <table id="studentTable">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Semester</th>
+                <th>Subject</th>
+                <th>MS1</th>
+                <th>MS2</th>
+                <th>SEM</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+          </table>
+        </section>
       </section>
     </main>
+    <script src="../../../routes/staff/route.js"></script>
+    <script src="../../../routes/search.js"></script>
   </body>
 </html>

@@ -411,6 +411,7 @@ if (deptForm) {
         const formData = {
           subject_code: form.querySelector(".sub_id").value,
           subject_name: form.querySelector(".subName").value,
+          semester: form.querySelector(".sem").value,
           dept_id: selectedOptionElement
             ? selectedOptionElement.getAttribute("data-dept-id")
             : null,
@@ -461,6 +462,7 @@ if (deptForm) {
           contact_number: form.querySelector(".contactNumber").value,
           email: form.querySelector(".email").value,
           department: form.querySelector(".dept").value,
+          semester: form.querySelector(".sem").value,
         };
 
         fetch("http://localhost:3000/submit-form-student", {

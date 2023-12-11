@@ -19,12 +19,14 @@ document
       .then((data) => {
         console.log("Server response:", data);
         if (data.error) {
-          // Display error message
-          //   alert(data.message);
           messageElement.textContent = data.message;
         } else {
-          // Redirect to the appropriate page
-          window.location.href = data.redirect;
+          sessionStorage.setItem("username", username);
+
+          // Redirect to the appropriate page with the username as a query parameter
+          window.location.href = `${
+            data.redirect
+          }?username=${encodeURIComponent(username)}`;
         }
       })
       .catch((error) => {
