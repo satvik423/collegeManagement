@@ -2,9 +2,28 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 
 const app = express();
 const port = 3000;
+
+// Multer configuration for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = path.join(__dirname, "uploads", "notes");
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const db = mysql.createConnection({
   host: "localhost",
@@ -12,6 +31,13 @@ const db = mysql.createConnection({
   password: "satvik423",
   database: "university",
 });
+
+const dbConfig = {
+  host: "localhost",
+  user: "root",
+  password: "satvik423",
+  database: "university",
+};
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -71,7 +97,7 @@ app.post("/login", async (req, res) => {
         case "faculty":
           return res.json({
             success: true,
-            redirect: "../pages/staff/home.html",
+            redirect: "../pages/staff/marks/marks.html",
           });
         case "student":
           return res.json({
@@ -816,6 +842,186 @@ function updateMarks(exam, marks, data) {
     }
   );
 }
+
+// API endpoint for uploading file and inserting details into the database
+app.post("/uploadAndInsert", upload.single("file"), async (req, res) => {
+  try {
+    const { faculty_id, noteName, semester, subject } = req.body;
+    const filePath = req.file.path;
+    console.log(
+      faculty_id + "\n" + noteName + "\n" + semester + "\n" + subject
+    );
+
+    // Create a MySQL connection pool
+    const pool = await mysql.createPool(dbConfig);
+
+    // Insert details into the database using db.query
+    const insertQuery =
+      "INSERT INTO note_details (faculty_id,note_name, semester, subject, path) VALUES (?,?, ?, ?, ?)";
+    const insertParams = [faculty_id, noteName, semester, subject, filePath];
+
+    pool.query(insertQuery, insertParams, (err, result) => {
+      // Check for errors
+      if (err) {
+        console.error("Error uploading file and inserting details:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+
+      // Log the result
+      console.log(result);
+
+      // No need to explicitly release the connection for pools
+
+      res.json({
+        message:
+          "File uploaded and details inserted into the database successfully!",
+      });
+    });
+  } catch (error) {
+    console.error("Error uploading file and inserting details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// API endpoint for fetching notes details
+
+app.get("/fetchNotes", async (req, res) => {
+  const { username } = req.query;
+  try {
+    // Query to fetch notes details
+    const fetchQuery = "SELECT * FROM note_details WHERE faculty_id = ?";
+
+    // Execute the query using db.query
+    db.query(fetchQuery, [username], (err, result) => {
+      // Check for errors
+      if (err) {
+        console.error("Error fetching notes details:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+
+      // Log the result
+      console.log(result);
+
+      // Send the fetched notes details in the response
+      res.json({ notesDetails: result });
+    });
+  } catch (error) {
+    console.error("Error fetching notes details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// DELETE endpoint to delete a note by ID
+app.delete("/deleteNote/:noteId", async (req, res) => {
+  const noteId = req.params.noteId;
+
+  try {
+    // Create a MySQL connection
+    const db = await mysql.createConnection(dbConfig);
+
+    // Delete note by ID from the database
+    const [result] = await db.query(
+      "DELETE FROM note_details WHERE note_id = ?",
+      [noteId]
+    );
+
+    // Release the connection
+    db.end();
+
+    if (result.affectedRows > 0) {
+      res.json({ message: "Note deleted successfully!" });
+    } else {
+      res.status(404).json({ error: "Note not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/fetchMarks", async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    const fetchQuery = `
+      SELECT
+        subject_name,
+        SUM(CASE WHEN exam='MSE 1' THEN marks ELSE 0 END) as MS1,
+        SUM(CASE WHEN exam='MSE 2' THEN marks ELSE 0 END) as MS2,
+        SUM(CASE WHEN exam='SEM' THEN marks ELSE 0 END) as SEM,
+        SUM(marks) as Total
+      FROM mark_details
+      WHERE student_id = ?
+      GROUP BY subject_name, semester;
+    `;
+
+    db.query(fetchQuery, [username], (err, result) => {
+      if (err) {
+        console.error("Error fetching marks details:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+
+      // Log the result
+      console.log(result);
+
+      // Send the fetched marks details in the response
+      res.json({ marksDetails: result });
+    });
+  } catch (error) {
+    console.error("Error fetching marks details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/fetchNotes-student", async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    // Get the department and semester of the student
+    const studentInfoQuery =
+      "SELECT department, semester FROM student_details WHERE student_id = ?";
+
+    db.query(studentInfoQuery, [username], (infoErr, infoResult) => {
+      if (infoErr) {
+        console.error("Error fetching student information:", infoErr);
+        res.status(500).json({ error: "Internal Server Error" });
+        return;
+      }
+
+      const { department, semester } = infoResult[0];
+
+      // Query to fetch notes details with faculty names
+      const fetchQuery = `
+        SELECT note_details.*, faculty_details.full_name AS faculty_name
+        FROM note_details
+        JOIN faculty_details ON note_details.faculty_id = faculty_details.faculty_id
+        WHERE note_details.semester = ? AND faculty_details.department = ?;
+      `;
+
+      // Execute the query using db.query
+      db.query(fetchQuery, [semester, department], (err, result) => {
+        // Check for errors
+        if (err) {
+          console.error("Error fetching notes details:", err);
+          res.status(500).json({ error: "Internal Server Error" });
+          return;
+        }
+
+        // Log the result
+        console.log(result);
+
+        // Send the fetched notes details in the response
+        res.json({ notesDetails: result });
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching notes details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
