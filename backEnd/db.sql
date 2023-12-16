@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS login_detail (
   password VARCHAR(255) NOT NULL
 );
 
+-- insert into login_detail values("admin","admin123");
+
 CREATE TABLE IF NOT EXISTS mark_details (
     student_id VARCHAR(20),
     subject_name VARCHAR(255),
@@ -49,7 +51,18 @@ CREATE TABLE IF NOT EXISTS mark_details (
     PRIMARY KEY (student_id, subject_name, exam),
     FOREIGN KEY (student_id) REFERENCES student_details(student_id)
 );
-SELECT student_id, full_name FROM student_details WHERE semester = "I sem" AND department = "MCA";
-select *from mark_details;
+
+CREATE TABLE IF NOT EXISTS note_details (
+    note_id INT PRIMARY KEY AUTO_INCREMENT,
+    faculty_id VARCHAR(20),
+    note_name VARCHAR(255),
+    semester VARCHAR(50),
+    subject VARCHAR(255),
+    path VARCHAR(255),
+    FOREIGN KEY (faculty_id) REFERENCES faculty_details(faculty_id)
+);
+
+
+
 
 

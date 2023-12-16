@@ -1,6 +1,8 @@
+@import url("https://fonts.googleapis.com/css?family=Preahvihear");
+@import url("https://fonts.googleapis.com/css?family=Sofia");
 :root {
   font-size: 16px;
-  font-family: "Open Sans";
+  font-family: "Preahvihear";
   --text-primary: #b6b6b6;
   --text-secondary: #ececec;
   --bg-primary: #23232e;
@@ -145,6 +147,7 @@ main {
 
 input {
   padding: 1rem;
+  font-family: "Preahvihear";
   box-sizing: border-box;
   border-radius: 0.5rem;
   background-color: #fffb;
@@ -317,7 +320,7 @@ tbody tr:hover {
 }
 
 .loginPage * {
-  font-family: "Poppins", sans-serif;
+  font-family: "Preahvihear";
   letter-spacing: 0.5px;
   outline: none;
   border: none;

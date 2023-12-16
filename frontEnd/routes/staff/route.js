@@ -377,3 +377,191 @@ if (studentTable) {
     }
   });
 }
+
+const notesForm = document.querySelector(".noteFrom");
+if (notesForm) {
+  console.log("Form found");
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const semInput = notesForm.querySelector(".sem");
+    const subInput = notesForm.querySelector(".sub");
+    const fileInput = notesForm.querySelector(".input_file");
+    const addButton = notesForm.querySelector(".btn-add");
+
+    // Event listener for changes in semester input
+    semInput.addEventListener("input", function () {
+      const selectedSemester = semInput.value;
+      const storedUsername = sessionStorage.getItem("username");
+
+      // Make a fetch request to get subjects based on semester and username
+      fetch(
+        `http://localhost:3000/subjects?semester=${selectedSemester}&username=${encodeURIComponent(
+          storedUsername
+        )}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          // Update the options in the subject datalist
+          updateSubjectDatalist(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching subjects:", error);
+        });
+    });
+
+    // Event listener for changes in subject input
+    subInput.addEventListener("input", function () {
+      // Enable file input when subject is selected
+      fileInput.removeAttribute("disabled");
+    });
+
+    // Event listener for changes in file input
+    fileInput.addEventListener("change", function () {
+      // Enable add button when file is selected
+      addButton.removeAttribute("disabled");
+    });
+
+    // Event listener for form submission
+    notesForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      // Get form data
+      const faculty_id = sessionStorage.getItem("username");
+      const noteName = notesForm.querySelector(".notes_name").value;
+      const semester = semInput.value;
+      const subject = subInput.value;
+      const file = fileInput.files[0];
+
+      // Create a FormData object to append form data
+      const formData = new FormData();
+      formData.append("faculty_id", faculty_id);
+      formData.append("noteName", noteName);
+      formData.append("semester", semester);
+      formData.append("subject", subject);
+      formData.append("file", file);
+
+      // Make a fetch request to upload the file and insert details into the database
+      fetch("http://localhost:3000/uploadAndInsert", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data.message);
+
+          // Optionally, display a success message to the user
+          const messageElement = document.getElementById("message");
+          messageElement.textContent = "Note added successfully!";
+          location.reload();
+          // Clear the form
+          notesForm.reset();
+        })
+        .catch((error) => {
+          console.error("Error uploading file and inserting details:", error);
+        });
+    });
+
+    function updateSubjectDatalist(subjects) {
+      const datalist = document.querySelector("#sub");
+      datalist.innerHTML = ""; // Clear existing options
+
+      subjects.forEach((subject) => {
+        const option = document.createElement("option");
+        option.value = subject;
+        datalist.appendChild(option);
+      });
+
+      // Enable subject input
+      subInput.removeAttribute("disabled");
+    }
+  });
+}
+
+const notesTable = document.getElementById("noteTable");
+if (notesTable) {
+  // Assuming you have a function to fetch notes details from the API
+  async function fetchNotesDetails() {
+    try {
+      const storedUsername = sessionStorage.getItem("username");
+
+      const response = await fetch(
+        `http://localhost:3000/fetchNotes?username=${encodeURIComponent(
+          storedUsername
+        )}`
+      );
+      const data = await response.json();
+
+      if (data.notesDetails) {
+        populateTable(data.notesDetails);
+      } else {
+        console.error("Error fetching notes details:", data.error);
+      }
+    } catch (error) {
+      console.error("Error fetching notes details:", error);
+    }
+  }
+
+  // Function to populate the table with notes details
+  function populateTable(notesDetails) {
+    const tableBody = document.getElementById("noteTable");
+
+    // Clear existing table rows
+    // tableBody.innerHTML = "";
+
+    // Iterate through notes details and create table rows
+    notesDetails.forEach((note) => {
+      const row = tableBody.insertRow();
+      const viewButton = document.createElement("input");
+      const deleteButton = document.createElement("input");
+
+      // Add data to the row
+      row.insertCell(0).textContent = note.note_name;
+      row.insertCell(1).textContent = note.semester;
+      row.insertCell(2).textContent = note.subject;
+
+      // Create view button
+      viewButton.type = "button";
+      viewButton.value = "View";
+      viewButton.classList.add("viewButtom");
+      viewButton.addEventListener("click", () => openFileInNewPage(note.path));
+      row.insertCell(3).appendChild(viewButton);
+
+      // Create delete button
+      deleteButton.type = "button";
+      deleteButton.value = "Delete";
+      deleteButton.classList.add("deleteButton");
+      deleteButton.addEventListener("click", () =>
+        deleteNoteById(note.note_id)
+      );
+      row.insertCell(4).appendChild(deleteButton);
+    });
+  }
+
+  // Function to open the file in a new page
+  function openFileInNewPage(filePath) {
+    window.open(filePath, "_blank");
+  }
+
+  // Function to delete a note by ID
+  async function deleteNoteById(noteId) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/deleteNote/${noteId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      const data = await response.json();
+      console.log(data.message);
+
+      // Refresh the table after deletion
+      location.reload();
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
+  }
+
+  // Call the fetchNotesDetails function to initialize the table
+  fetchNotesDetails();
+}
