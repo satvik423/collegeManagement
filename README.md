@@ -19,47 +19,6 @@ The CMS is divided into three main modules:
 
 Each module has distinct features designed to simplify and optimize specific tasks.
 
-## Screenshots
-
-### Login Page
-![Login Page](assets/login.png)
-
-### Admin Home Page
-![Admin Home Page](assets/adminHomepage.png)
-
-### Faculty List Page
-![Admin Home Page](assets/facultyList.png)
-
-### Add Faculty Page
-![Admin Home Page](assets/addFaculty.png)
-
-### Student List Page
-![Admin Home Page](assets/studentList.png)
-
-### Add Student Page
-![Admin Home Page](assets/addStudent.png)
-
-### Department List Page
-![Admin Home Page](assets/deptList.png)
-
-### Add Department Page
-![Admin Home Page](assets/addDept.png)
-
-### Subject List Page 
-![Admin Home Page](assets/subjectList.png)
-
-### Add Subject Page
-![Admin Home Page](assets/addSubject.png)
-
-### Add Marks Page
-![Admin Home Page](assets/addMarks.png)
-
-### Edit Marks Page
-![Admin Home Page](assets/editMarks.png)
-
-### Add / Delete Notes Page
-![Admin Home Page](assets/addDeleteNotes.png)
-
 
 ## Presentation
 
@@ -114,6 +73,47 @@ Once installed, you can access the College Management System through your web br
 - **Administrator:** Manage faculty, students, departments, and subjects.
 - **Faculty:** Enter student marks and upload course notes.
 - **Student:** View marks and access course materials.
+
+## Screenshots
+
+### Login Page
+![Login Page](assets/login.png)
+
+### Admin Home Page
+![Admin Home Page](assets/adminHomepage.png)
+
+### Faculty List Page
+![Admin Home Page](assets/facultyList.png)
+
+### Add Faculty Page
+![Admin Home Page](assets/addFaculty.png)
+
+### Student List Page
+![Admin Home Page](assets/studentList.png)
+
+### Add Student Page
+![Admin Home Page](assets/addStudent.png)
+
+### Department List Page
+![Admin Home Page](assets/deptList.png)
+
+### Add Department Page
+![Admin Home Page](assets/addDept.png)
+
+### Subject List Page 
+![Admin Home Page](assets/subjectList.png)
+
+### Add Subject Page
+![Admin Home Page](assets/addSubject.png)
+
+### Add Marks Page
+![Admin Home Page](assets/addMarks.png)
+
+### Edit Marks Page
+![Admin Home Page](assets/editMarks.png)
+
+### Add / Delete Notes Page
+![Admin Home Page](assets/addDeleteNotes.png)
 
 
 
